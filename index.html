@@ -111,6 +111,29 @@
         }
         input:focus, textarea:focus, select:focus { outline: none; border-color: var(--primary); }
 
+        /* Быстрые теги неисправностей */
+        .quick-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+        .tag-btn {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 5px 10px;
+            font-size: 11px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .tag-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
         .btn {
             background-color: var(--primary);
             color: white;
@@ -275,8 +298,8 @@
             padding-top: 15px;
         }
 
-        /* Модальное окно для печати квитанции */
-        #printModal {
+        /* Модальные окна */
+        #printModal, #diagModal {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -331,21 +354,8 @@
             width: 130px;
             display: inline-block;
         }
-
         .receipt-footer { text-align: center; font-size: 10px; color: #64748b; border-top: 1px dashed #cbd5e1; padding-top: 10px; margin-top: 10px; }
 
-        /* Модальное окно редактирования диагностики */
-        #diagModal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            padding: 15px;
-            box-sizing: border-box;
-        }
         .diag-content {
             background: var(--card-bg);
             border: 1px solid var(--border);
@@ -400,7 +410,7 @@
             </div>
         </div>
 
-        <!-- ВКЛАДКА 1: НОВЫЙ ЗАКАЗ (Прием на диагностику) -->
+        <!-- ВКЛАДКА 1: НОВЫЙ ЗАКАЗ -->
         <div id="tab-new" class="tab-content active">
             <form id="orderForm">
                 <div class="form-group">
@@ -408,12 +418,28 @@
                     <input type="text" id="model" required placeholder="Например: Samsung Galaxy A24 / iPhone 11">
                 </div>
                 <div class="form-group">
-                    <label>Неисправность со слов клиента:</label>
-                    <textarea id="issue" rows="2" required placeholder="Опишите проблему со слов клиента..."></textarea>
+                    <label>Неисправность / Что делать:</label>
+                    <div class="quick-tags">
+                        <button type="button" class="tag-btn" onclick="addIssue('Замена дисплея')">📱 Замена дисплея</button>
+                        <button type="button" class="tag-btn" onclick="addIssue('Замена аккумулятора')">🔋 Замена АКБ</button>
+                        <button type="button" class="tag-btn" onclick="addIssue('Замена разъема зарядки')">🔌 Разъем зарядки</button>
+                        <button type="button" class="tag-btn" onclick="addIssue('Чистка после попадания влаги')">💧 Чистка от воды</button>
+                        <button type="button" class="tag-btn" onclick="addIssue('Замена стекла / крышки')">🛠 Замена стекла</button>
+                        <button type="button" class="tag-btn" onclick="addIssue('Диагностика')">🔍 Диагностика</button>
+                    </div>
+                    <textarea id="issue" rows="2" required placeholder="Выберите выше или напишите вручную..."></textarea>
                 </div>
                 <div class="form-group">
-                    <label>Сумма диагностики (сборка/разборка в случае отказа):</label>
-                    <input type="text" id="diag_refusal_price" required placeholder="Например: 500 руб.">
+                    <label>Цена ремонта (если известна сразу, иначе пусто):</label>
+                    <input type="text" id="price" placeholder="Например: 5000 руб. (или пусто)">
+                </div>
+                <div class="form-group">
+                    <label>Себестоимость запчасти / расход:</label>
+                    <input type="text" id="cost" placeholder="Например: 2500 руб. (если есть)">
+                </div>
+                <div class="form-group">
+                    <label>Сумма за диагностику (в случае отказа за сборку/разборку):</label>
+                    <input type="text" id="diag_refusal_price" placeholder="Например: 500 руб.">
                 </div>
                 <div class="form-group">
                     <label>Имя хозяина (клиента):</label>
@@ -427,7 +453,7 @@
                     <label>Срок выполнения / выдачи:</label>
                     <input type="text" id="deadline" required placeholder="Например: 1 день / Завтра в 15:00">
                 </div>
-                <button type="submit" class="btn">Принять в работу (Создать квитанцию)</button>
+                <button type="submit" class="btn">Принять в работу и создать квитанцию</button>
             </form>
         </div>
 
@@ -478,9 +504,7 @@
 
     <!-- Модальное окно для печати квитанции -->
     <div id="printModal">
-        <div class="receipt-content" id="receiptContentContainer">
-            <!-- Чековый контент -->
-        </div>
+        <div class="receipt-content" id="receiptContentContainer"></div>
         <div style="margin-top: 15px; display: flex; gap: 10px;" class="no-print">
             <button class="btn" onclick="window.print()" style="background: var(--success);">🖨 Печать / PDF</button>
             <button class="btn" onclick="closePrintModal()" style="background: #64748b;">❌ Закрыть</button>
@@ -495,11 +519,11 @@
             
             <div class="form-group">
                 <label>Что выявила диагностика:</label>
-                <textarea id="modalDiagResult" rows="2" placeholder="Например: Сгорел контроллер питания..."></textarea>
+                <textarea id="modalDiagResult" rows="2" placeholder="Например: Требуется замена шлейфа..."></textarea>
             </div>
             <div class="form-group">
                 <label>Что нужно заменить / Вид ремонта:</label>
-                <input type="text" id="modalRepairType" placeholder="Например: Замена контроллера питания">
+                <input type="text" id="modalRepairType" placeholder="Например: Замена шлейфа питания">
             </div>
             <div class="form-group">
                 <label>Итоговая сумма ремонта (руб.):</label>
@@ -537,6 +561,15 @@
             }
         }
 
+        function addIssue(text) {
+            const issueField = document.getElementById('issue');
+            if (issueField.value.trim() === '') {
+                issueField.value = text;
+            } else {
+                issueField.value += ', ' + text.toLowerCase();
+            }
+        }
+
         function parseDate(dateStr) {
             if (!dateStr) return new Date(0);
             const parts = dateStr.split('.');
@@ -553,28 +586,30 @@
                                   String(now.getMonth() + 1).padStart(2, '0') + '.' + 
                                   now.getFullYear();
             
+            const enteredPrice = document.getElementById('price').value.trim();
+            const finalPrice = enteredPrice !== '' ? enteredPrice : 'По результатам';
+
             const newOrder = {
                 id: Date.now(),
                 track: trackCode,
                 model: document.getElementById('model').value,
                 issue: document.getElementById('issue').value,
-                diagRefusalPrice: document.getElementById('diag_refusal_price').value,
-                price: 'По результатам',
-                cost: '',
+                diagRefusalPrice: document.getElementById('diag_refusal_price').value.trim() || 'нет',
+                price: finalPrice,
+                cost: document.getElementById('cost').value.trim(),
                 repairType: '',
                 diagResult: '',
                 name: document.getElementById('client_name').value,
                 phone: document.getElementById('client_phone').value.trim(),
                 deadline: document.getElementById('deadline').value,
-                status: 'На диагностике',
+                status: enteredPrice !== '' ? 'В работе' : 'На диагностике',
                 date: formattedDate
             };
 
             orders.unshift(newOrder);
             saveAndRender();
             
-            let tgMessage = `📦 *Новый заказ на диагностику: ${newOrder.track}*%0A📱 Устройство: ${newOrder.model}%0A🛠 Проблема: ${newOrder.issue}%0A👤 Клиент: ${newOrder.name} (${newOrder.phone})%0A⚠️ Цена за сборку/разборку (отказ): ${newOrder.diagRefusalPrice}%0A⏳ Срок: ${newOrder.deadline}`;
-            
+            let tgMessage = `📦 *Заказ: ${newOrder.track}*%0A📱 Устройство: ${newOrder.model}%0A🛠 Проблема: ${newOrder.issue}%0A💰 Цена: ${newOrder.price}%0A👤 Клиент: ${newOrder.name} (${newOrder.phone})`;
             window.open(`https://t.me/jvmpos?text=${tgMessage}`, '_blank');
 
             document.getElementById('orderForm').reset();
@@ -672,12 +707,14 @@
             const ord = orders.find(o => o.id === id);
             
             // Формируем текст сообщения для клиента
-            const messageText = `Здравствуйте, ${ord.name}! По вашему устройству (${ord.model}) проведена диагностика.\n` +
-                                `Диагноз: ${diagResult}.\n` +
-                                `Требуемая замена / ремонт: ${repairType}.\n` +
-                                `Сумма ремонта составит: ${price}.\n` +
-                                `В случае отказа от ремонта стоимость сборки/разборки (диагностики): ${ord.diagRefusalPrice}.\n` +
-                                `Ждем вашего ответа!`;
+            let messageText = `Здравствуйте, ${ord.name}! По вашему устройству (${ord.model}) проведена диагностика.\n`;
+            if (diagResult) messageText += `Диагноз: ${diagResult}.\n`;
+            if (repairType) messageText += `Требуемая замена / ремонт: ${repairType}.\n`;
+            messageText += `Сумма ремонта составит: ${price}.\n`;
+            if (ord.diagRefusalPrice && ord.diagRefusalPrice !== 'нет') {
+                messageText += `В случае отказа от ремонта стоимость сборки/разборки (диагностики): ${ord.diagRefusalPrice}.\n`;
+            }
+            messageText += `Ждем вашего ответа!`;
 
             document.getElementById('clientMsgPreviewText').textContent = messageText;
             document.getElementById('clientMsgPreviewContainer').style.display = 'block';
@@ -688,9 +725,15 @@
             const ord = orders.find(o => o.id === id);
             if (!ord) return;
             
-            const text = `Здравствуйте, ${ord.name}! По устройству ${ord.model} (трек: ${ord.track}). ` + 
-                         (ord.diagResult ? `Диагностика: ${ord.diagResult}. Замена: ${ord.repairType}. Сумма ремонта: ${ord.price}.` : `Заказ принят в работу.`) +
-                         ` В случае отказа за сборку/разборку: ${ord.diagRefusalPrice}.`;
+            let text = `Здравствуйте, ${ord.name}! По устройству ${ord.model} (трек: ${ord.track}). `;
+            if (ord.diagResult) {
+                text += `Диагностика: ${ord.diagResult}. Замена: ${ord.repairType}. Сумма ремонта: ${ord.price}.`;
+            } else {
+                text += `Заказ принят в работу. Сумма: ${ord.price}.`;
+            }
+            if (ord.diagRefusalPrice && ord.diagRefusalPrice !== 'нет') {
+                text += ` В случае отказа за сборку/разборку: ${ord.diagRefusalPrice}.`;
+            }
 
             const encodedText = encodeURIComponent(text);
             const cleanPhone = ord.phone.replace(/[^0-9+]/g, '');
@@ -743,7 +786,7 @@
                             ${ord.diagResult ? `🔍 Диагностика: <span>${ord.diagResult}</span><br>` : ''}
                             ${ord.repairType ? `🛠 Замена: <span>${ord.repairType}</span><br>` : ''}
                             💰 Сумма: <span>${ord.price}</span> ${ord.cost ? `(Закупка: ${ord.cost})` : ''}<br>
-                            ⚠️ Диагностика при отказе: <span>${ord.diagRefusalPrice}</span><br>
+                            ${ord.diagRefusalPrice && ord.diagRefusalPrice !== 'нет' ? `⚠️ Диаг. при отказе: <span>${ord.diagRefusalPrice}</span><br>` : ''}
                             👤 Клиент: <span>${ord.name} (${ord.phone})</span><br>
                             ⏳ Срок: <span>${ord.deadline}</span> | 📅 ${ord.date}
                         </div>
@@ -753,7 +796,7 @@
                                 <button class="btn-mini btn-wa" onclick="sendMsg(${ord.id}, 'wa')">💬 WA</button>
                                 <button class="btn-mini btn-tg" onclick="sendMsg(${ord.id}, 'tg')">✈️ TG</button>
                                 <button class="btn-mini btn-sms" onclick="sendMsg(${ord.id}, 'sms')">✉️ SMS</button>
-                                <button class="btn-mini btn-print" style="background: var(--primary);" onclick="openDiagModal(${ord.id})">⚙️ Заполнить результаты диагностики</button>
+                                <button class="btn-mini btn-print" style="background: var(--primary);" onclick="openDiagModal(${ord.id})">⚙️ Заполнить результаты</button>
                                 <button class="btn-mini btn-print" onclick="openPrintModal(${ord.id})">🖨 Печать квитанции</button>
                                 <div class="btn-status-group">
                                     <button class="btn-mini btn-status" onclick="changeStatus(${ord.id}, '${ord.status === 'Готов' ? 'В работе' : 'Готов'}')">
@@ -806,7 +849,7 @@
                     <div><span>Телефон:</span> <b>${ord.phone}</b></div>
                     <div><span>Устройство:</span> <b>${ord.model}</b></div>
                     <div><span>Неисправность:</span> <b>${ord.issue}</b></div>
-                    <div><span>Диаг. при отказе:</span> <b>${ord.diagRefusalPrice}</b></div>
+                    ${ord.diagRefusalPrice && ord.diagRefusalPrice !== 'нет' ? `<div><span>Диаг. при отказе:</span> <b>${ord.diagRefusalPrice}</b></div>` : ''}
                     <div><span>Срок выдачи:</span> <b>${ord.deadline}</b></div>
                     <div><span>Сумма к оплате:</span> <b>${ord.price}</b></div>
                 </div>
