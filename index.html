@@ -534,7 +534,14 @@
             orders.unshift(newOrder);
             saveAndRender();
             
-            const tgMessage = `📦 *Заказ: ${newOrder.track}*%0A📱 Устройство: ${newOrder.model} — ${newOrder.issue}%0A💰 Цена: ${newOrder.price}%0A👤 Клиент: ${newOrder.name} (${newOrder.phone})%0A⏳ Срок: ${newOrder.deadline}%0A📅 Дата приема: ${newOrder.date}`;
+            // Формируем текст для Telegram: модель и проблема на отдельных строках + заметка мастера (если есть)
+            let tgMessage = `📦 *Заказ: ${newOrder.track}*%0A📱 Устройство: ${newOrder.model}%0A🛠 Проблема: ${newOrder.issue}%0A💰 Цена: ${newOrder.price}%0A👤 Клиент: ${newOrder.name} (${newOrder.phone})`;
+            
+            if (newOrder.note) {
+                tgMessage += `%0A📝 Заметка: ${newOrder.note}`;
+            }
+            
+            tgMessage += `%0A⏳ Срок: ${newOrder.deadline}%0A📅 Дата приема: ${newOrder.date}`;
             
             window.open(`https://t.me/jvmpos?text=${tgMessage}`, '_blank');
 
@@ -651,7 +658,8 @@
                             <span class="status-badge ${statusClass}">${ord.status}</span>
                         </div>
                         <div class="order-info">
-                            📱 Устройство: <span>${ord.model} — ${ord.issue}</span><br>
+                            📱 Устройство: <span>${ord.model}</span><br>
+                            🛠 Проблема: <span>${ord.issue}</span><br>
                             💰 Цена: <span>${ord.price}</span> ${ord.cost ? `(Себест: ${ord.cost})` : ''}<br>
                             👤 Клиент: <span>${ord.name} (${ord.phone})</span><br>
                             ⏳ Срок: <span>${ord.deadline}</span> | 📅 ${ord.date}
