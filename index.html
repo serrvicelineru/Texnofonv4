@@ -110,29 +110,6 @@
             box-sizing: border-box;
         }
         input:focus, textarea:focus, select:focus { outline: none; border-color: var(--primary); }
-        
-        /* Быстрые теги неисправностей */
-        .quick-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-bottom: 8px;
-        }
-        .tag-btn {
-            background: #0f172a;
-            border: 1px solid var(--border);
-            color: var(--text-muted);
-            padding: 5px 10px;
-            font-size: 11px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .tag-btn:hover {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
 
         .btn {
             background-color: var(--primary);
@@ -253,29 +230,6 @@
 
         .order-info { font-size: 14px; margin-bottom: 10px; color: var(--text-muted); line-height: 1.5; }
         .order-info span { color: var(--text); font-weight: 500; }
-        
-        .master-note {
-            background: rgba(30, 41, 59, 0.7);
-            border-left: 3px solid var(--warning);
-            padding: 8px 10px;
-            font-size: 12px;
-            color: var(--text-muted);
-            border-radius: 0 8px 8px 0;
-            margin-bottom: 12px;
-        }
-        .master-note span { color: var(--warning); font-weight: 600; }
-
-        .msg-template-box {
-            margin-bottom: 8px;
-        }
-        .msg-template-box select {
-            padding: 8px 10px;
-            font-size: 12px;
-            background: #1e293b;
-            color: var(--text);
-            border-radius: 8px;
-            border: 1px solid var(--border);
-        }
 
         .actions-grid {
             display: grid;
@@ -321,7 +275,7 @@
             padding-top: 15px;
         }
 
-        /* Модальное окно для печати чека */
+        /* Модальное окно для печати квитанции */
         #printModal {
             display: none;
             position: fixed;
@@ -459,7 +413,7 @@
                 </div>
                 <div class="form-group">
                     <label>Сумма диагностики (сборка/разборка в случае отказа):</label>
-                    <input type="text" id="diag_refusal_price" required value="500 сум/руб." placeholder="Например: 500">
+                    <input type="text" id="diag_refusal_price" required placeholder="Например: 500 руб.">
                 </div>
                 <div class="form-group">
                     <label>Имя хозяина (клиента):</label>
@@ -467,7 +421,7 @@
                 </div>
                 <div class="form-group">
                     <label>Номер телефона:</label>
-                    <input type="text" id="client_phone" required placeholder="+998 (90) 123-45-67">
+                    <input type="text" id="client_phone" required placeholder="+7 (999) 000-00-00">
                 </div>
                 <div class="form-group">
                     <label>Срок выполнения / выдачи:</label>
@@ -548,12 +502,12 @@
                 <input type="text" id="modalRepairType" placeholder="Например: Замена контроллера питания">
             </div>
             <div class="form-group">
-                <label>Итоговая сумма ремонта:</label>
-                <input type="text" id="modalPrice" placeholder="Например: 3500">
+                <label>Итоговая сумма ремонта (руб.):</label>
+                <input type="text" id="modalPrice" placeholder="Например: 3500 руб.">
             </div>
             <div class="form-group">
                 <label>Закупка запчасти (себестоимость для отчета):</label>
-                <input type="text" id="modalCost" placeholder="Например: 1200">
+                <input type="text" id="modalCost" placeholder="Например: 1200 руб.">
             </div>
 
             <div id="clientMsgPreviewContainer" style="display: none;">
