@@ -3,460 +3,903 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Система учета СЦ - Прием и Диагностика</title>
+    <title>More Case — Система приема и учета ремонтов</title>
     <style>
         :root {
-            --primary: #1e40af;
+            --primary: #2563eb;
             --primary-hover: #1d4ed8;
-            --success: #15803d;
-            --warning: #b45309;
-            --danger: #b91c1c;
-            --bg: #f1f5f9;
-            --card-bg: #ffffff;
-            --text: #0f172a;
-            --border: #cbd5e1;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --whatsapp: #25d366;
+            --telegram: #0088cc;
+            --sms: #8b5cf6;
+            --purple: #a855f7;
         }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg);
             color: var(--text);
             margin: 0;
-            padding: 20px;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
         }
-
-        .wrapper {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        header h1 {
-            margin: 0;
-            color: var(--primary);
-            font-size: 26px;
-        }
-
-        header p {
-            color: #64748b;
-            font-size: 14px;
-        }
-
-        .grid-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .grid-container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .panel {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            margin-bottom: 20px;
-        }
-
-        .panel h2 {
-            margin-top: 0;
-            font-size: 18px;
-            border-bottom: 2px solid #f1f5f9;
-            padding-bottom: 10px;
-            color: #334155;
-        }
-
-        .field-group {
-            margin-bottom: 16px;
-        }
-
-        label {
-            display: block;
-            font-weight: 600;
-            font-size: 13px;
-            margin-bottom: 6px;
-            color: #475569;
-        }
-
-        input[type="text"],
-        input[type="tel"],
-        textarea,
-        select {
+        .container {
             width: 100%;
-            padding: 10px 12px;
+            max-width: 600px;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             border: 1px solid var(--border);
-            border-radius: 6px;
-            font-size: 14px;
             box-sizing: border-box;
-            background-color: #fff;
-            transition: border-color 0.2s;
         }
-
-        input:focus, textarea:focus, select:focus {
-            outline: none;
+        .header {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            align-items: center;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 26px;
+            color: #60a5fa;
+            letter-spacing: 0.5px;
+        }
+        .header p {
+            margin: 0;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+            margin-top: 12px;
+        }
+        .tab-btn {
+            flex: 1;
+            background: #0f172a;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            padding: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: 0.2s;
+            text-align: center;
+        }
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
             border-color: var(--primary);
         }
-
-        textarea {
-            resize: vertical;
-            min-height: 80px;
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        .form-group {
+            margin-bottom: 15px;
         }
-
-        .info-note {
-            background: #f8fafc;
-            border-left: 4px solid var(--primary);
-            padding: 10px 14px;
-            font-size: 12px;
-            color: #475569;
-            border-radius: 0 6px 6px 0;
-            margin-bottom: 16px;
-            line-height: 1.4;
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 6px;
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 14px;
+            background-color: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 15px;
+            box-sizing: border-box;
+        }
+        input:focus, textarea:focus, select:focus { outline: none; border-color: var(--primary); }
+        
+        /* Быстрые теги неисправностей */
+        .quick-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+        .tag-btn {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 5px 10px;
+            font-size: 11px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .tag-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
         }
 
         .btn {
             background-color: var(--primary);
             color: white;
             border: none;
-            padding: 12px 20px;
-            border-radius: 6px;
+            padding: 14px;
             font-size: 15px;
             font-weight: 600;
+            border-radius: 10px;
             cursor: pointer;
             width: 100%;
-            transition: background 0.2s;
+            transition: 0.2s;
+            margin-top: 5px;
         }
+        .btn:hover { background-color: var(--primary-hover); }
 
-        .btn:hover {
-            background-color: var(--primary-hover);
-        }
-
-        .btn-secondary {
-            background-color: #64748b;
-        }
-        .btn-secondary:hover {
-            background-color: #475569;
-        }
-
-        .full-width {
-            grid-column: 1 / -1;
-        }
-
-        /* Список заказов */
-        .order-card {
+        /* Блок отчетов и аналитики */
+        .report-section {
+            background: #0f172a;
             border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 16px;
+            border-radius: 14px;
+            padding: 15px;
             margin-bottom: 15px;
-            background: #ffffff;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+        .report-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .report-header-row span {
+            font-size: 13px;
+            font-weight: bold;
+            color: #60a5fa;
+            text-transform: uppercase;
+        }
+        .report-header-row select {
+            width: auto;
+            padding: 6px 10px;
+            font-size: 13px;
+            background: #1e293b;
         }
 
-        .order-top {
+        .stats-grid-4 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+        .stat-card {
+            background: #1e293b;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+        }
+        .stat-card.phones { border-color: #3b82f6; }
+        .stat-card.revenue { border-color: var(--success); background: rgba(16, 185, 129, 0.04); }
+        .stat-card.expenses { border-color: var(--warning); background: rgba(245, 158, 11, 0.04); }
+        .stat-card.profit { border-color: var(--purple); background: rgba(168, 85, 247, 0.04); }
+
+        .stat-card .num {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--text);
+        }
+        .stat-card.phones .num { color: #60a5fa; }
+        .stat-card.revenue .num { color: var(--success); }
+        .stat-card.expenses .num { color: var(--warning); }
+        .stat-card.profit .num { color: var(--purple); }
+        
+        .stat-card .lbl {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 3px;
+            text-transform: uppercase;
+        }
+
+        .search-box {
+            margin-bottom: 15px;
+        }
+
+        .order-card {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .order-card.archived {
+            opacity: 0.6;
+            border-style: dashed;
+        }
+        .order-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
-            border-bottom: 1px solid #f1f5f9;
+            border-bottom: 1px solid #1e293b;
             padding-bottom: 8px;
         }
-
-        .order-title {
-            font-weight: bold;
-            font-size: 15px;
-            color: var(--primary);
-        }
-
-        .status-badge {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: bold;
-            text-transform: uppercase;
+        .track-badge {
+            background: var(--primary);
             color: white;
-        }
-        .st-new { background-color: var(--warning); }
-        .st-diag { background-color: var(--primary); }
-        .st-ready { background-color: var(--success); }
-
-        .order-details p {
-            margin: 4px 0;
+            padding: 4px 10px;
+            border-radius: 6px;
             font-size: 13px;
+            font-weight: bold;
+        }
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-work { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+        .status-ready { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+        .status-done { background: rgba(168, 85, 247, 0.2); color: var(--purple); }
+
+        .order-info { font-size: 14px; margin-bottom: 10px; color: var(--text-muted); line-height: 1.5; }
+        .order-info span { color: var(--text); font-weight: 500; }
+        
+        .master-note {
+            background: rgba(30, 41, 59, 0.7);
+            border-left: 3px solid var(--warning);
+            padding: 8px 10px;
+            font-size: 12px;
+            color: var(--text-muted);
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 12px;
+        }
+        .master-note span { color: var(--warning); font-weight: 600; }
+
+        .msg-template-box {
+            margin-bottom: 8px;
+        }
+        .msg-template-box select {
+            padding: 8px 10px;
+            font-size: 12px;
+            background: #1e293b;
+            color: var(--text);
+            border-radius: 8px;
+            border: 1px solid var(--border);
         }
 
-        .order-actions {
-            margin-top: 12px;
+        .actions-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px;
+        }
+        .btn-mini {
+            padding: 10px 4px;
+            font-size: 12px;
+            border-radius: 8px;
+            border: none;
+            color: white;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            font-weight: 600;
             display: flex;
-            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            box-sizing: border-box;
+        }
+        .btn-wa { background: var(--whatsapp); }
+        .btn-tg { background: var(--telegram); }
+        .btn-sms { background: var(--sms); }
+        .btn-print { background: #475569; grid-column: span 3; }
+        .btn-status-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            grid-column: span 3;
+        }
+        .btn-status { background: #334155; }
+        .btn-done { background: var(--purple); }
+        .btn-del { background: #7f1d1d; grid-column: span 3; margin-top: 4px; }
+        
+        .archive-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--text-muted);
+            margin: 25px 0 10px 0;
+            border-top: 1px solid var(--border);
+            padding-top: 15px;
         }
 
-        /* Модальное окно */
-        .modal-overlay {
+        /* Модальное окно для печати чека */
+        #printModal {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.6);
+            background: rgba(0,0,0,0.8);
             justify-content: center;
             align-items: center;
             z-index: 1000;
             padding: 15px;
             box-sizing: border-box;
         }
-
-        .modal-body {
-            background: white;
-            padding: 25px;
+        .receipt-content {
+            background: #ffffff;
+            color: #0f172a;
+            padding: 22px;
             border-radius: 12px;
             width: 100%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            max-width: 380px;
+            font-family: monospace;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        .receipt-header { text-align: center; border-bottom: 2px dashed #cbd5e1; padding-bottom: 10px; margin-bottom: 12px; }
+        .receipt-header h2 { margin: 0; font-size: 20px; color: #1e293b; }
+        .receipt-header p { margin: 4px 0 0; font-size: 11px; color: #64748b; }
+        .receipt-body { font-size: 12px; line-height: 1.5; margin-bottom: 10px; }
+        .receipt-body div { display: flex; justify-content: space-between; border-bottom: 1px dotted #e2e8f0; padding: 3px 0; }
+        
+        .receipt-rules {
+            font-size: 8.5px;
+            color: #475569;
+            border-top: 1px dashed #cbd5e1;
+            padding-top: 8px;
+            margin-bottom: 12px;
+            line-height: 1.3;
+            text-align: justify;
         }
 
-        .msg-output {
-            background: #f8fafc;
-            border: 1px dashed var(--border);
-            padding: 12px;
-            border-radius: 6px;
-            font-family: monospace;
+        .receipt-signatures {
+            border-top: 1px dashed #cbd5e1;
+            padding-top: 10px;
+            font-size: 11px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .sig-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+        .sig-line {
+            border-bottom: 1px solid #475569;
+            width: 130px;
+            display: inline-block;
+        }
+
+        .receipt-footer { text-align: center; font-size: 10px; color: #64748b; border-top: 1px dashed #cbd5e1; padding-top: 10px; margin-top: 10px; }
+
+        /* Модальное окно редактирования диагностики */
+        #diagModal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+        .diag-content {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 22px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .msg-box {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            padding: 10px;
+            border-radius: 8px;
             font-size: 12px;
+            color: #60a5fa;
             white-space: pre-wrap;
-            margin-top: 10px;
-            color: #1e293b;
+            margin-top: 8px;
+            margin-bottom: 12px;
+        }
+
+        .developer-footer {
+            margin-top: 25px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            padding-top: 15px;
+        }
+        .developer-footer a { color: #60a5fa; text-decoration: none; }
+
+        @media print {
+            body * { visibility: hidden; }
+            #printModal, #printModal * { visibility: visible; }
+            #printModal { position: absolute; left: 0; top: 0; background: white; padding: 0; }
+            .receipt-content { box-shadow: none; width: 100%; max-width: 100%; }
+            .no-print { display: none !important; }
         }
     </style>
 </head>
 <body>
+    <div class="container">
+        <div class="header">
+            <h1>More Case</h1>
+            <p>Система приема и учета ремонтов</p>
+            <div class="nav-tabs">
+                <button class="tab-btn active" onclick="switchTab('new')">➕ Новый заказ</button>
+                <button class="tab-btn" onclick="switchTab('list')">📋 База (<span id="orderCount">0</span>)</button>
+            </div>
+        </div>
 
-<div class="wrapper">
-    <header>
-        <h1>Сервисный Центр — Учет и Приемка</h1>
-        <p>Автоматизированная система управления заказами и квитанциями</p>
-    </header>
-
-    <div class="grid-container">
-        <!-- Блок 1: Форма первичного приема -->
-        <div class="panel">
-            <h2>Прием устройства на диагностику</h2>
-            <form id="receptionForm">
-                <div class="field-group">
-                    <label>ФИО Клиента:</label>
-                    <input type="text" id="clientName" required placeholder="Введите ФИО клиента">
-                </div>
-                <div class="field-group">
-                    <label>Номер телефона:</label>
-                    <input type="tel" id="clientPhone" required placeholder="+7 (999) 000-00-00">
-                </div>
-                <div class="field-group">
+        <!-- ВКЛАДКА 1: НОВЫЙ ЗАКАЗ (Прием на диагностику) -->
+        <div id="tab-new" class="tab-content active">
+            <form id="orderForm">
+                <div class="form-group">
                     <label>Модель телефона:</label>
-                    <input type="text" id="deviceModel" required placeholder="Например: iPhone 12 Pro / Redmi Note 10">
+                    <input type="text" id="model" required placeholder="Например: Samsung Galaxy A24 / iPhone 11">
                 </div>
-                <div class="field-group">
-                    <label>Заявленная неисправность (со слов клиента):</label>
-                    <textarea id="clientProblem" required placeholder="Опишите проблему..."></textarea>
+                <div class="form-group">
+                    <label>Неисправность со слов клиента:</label>
+                    <textarea id="issue" rows="2" required placeholder="Опишите проблему со слов клиента..."></textarea>
                 </div>
-                <div class="field-group">
-                    <label>Сумма диагностики (в случае отказа от ремонта за сборку/разборку):</label>
-                    <input type="text" id="diagRefusalPrice" value="500 руб." required>
+                <div class="form-group">
+                    <label>Сумма диагностики (сборка/разборка в случае отказа):</label>
+                    <input type="text" id="diag_refusal_price" required value="500 сум/руб." placeholder="Например: 500">
                 </div>
-
-                <div class="info-note">
-                    <strong>Условия квитанции:</strong><br>
-                    • Срок бесплатного хранения устройства после уведомления о готовности — <b>30 дней</b>.<br>
-                    • Гарантия на выполненные работы — <b>14 дней</b>.
+                <div class="form-group">
+                    <label>Имя хозяина (клиента):</label>
+                    <input type="text" id="client_name" required placeholder="Имя клиента">
                 </div>
-
-                <button type="submit" class="btn">Принять в работу (Оформить)</button>
+                <div class="form-group">
+                    <label>Номер телефона:</label>
+                    <input type="text" id="client_phone" required placeholder="+998 (90) 123-45-67">
+                </div>
+                <div class="form-group">
+                    <label>Срок выполнения / выдачи:</label>
+                    <input type="text" id="deadline" required placeholder="Например: 1 день / Завтра в 15:00">
+                </div>
+                <button type="submit" class="btn">Принять в работу (Создать квитанцию)</button>
             </form>
         </div>
 
-        <!-- Блок 2: База заказов -->
-        <div class="panel">
-            <h2>База заказов в системе</h2>
-            <div id="ordersContainer">
-                <!-- Сюда динамически рендерятся заказы -->
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Модальное окно диагностики и редактирования данных -->
-<div class="modal-overlay" id="diagnosticModal">
-    <div class="modal-body">
-        <h2>Редактирование заказа и результаты диагностики</h2>
-        <input type="hidden" id="editOrderId">
-        
-        <div class="field-group">
-            <label>Результат проведенной диагностики (что выявлено):</label>
-            <textarea id="editDiagResult" placeholder="Например: Выявлен обрыв цепи питания, поврежден контроллер заряда..."></textarea>
-        </div>
-
-        <div class="field-group">
-            <label>Требуемая замена / Вид ремонта:</label>
-            <input type="text" id="editRepairType" placeholder="Например: Замена контроллера питания U2">
-        </div>
-
-        <div class="field-group">
-            <label>Итоговая сумма ремонта (руб.):</label>
-            <input type="text" id="editTotalPrice" placeholder="Например: 2500 руб.">
-        </div>
-
-        <button type="button" class="btn" onclick="saveDiagnosisData()">Сохранить изменения и сформировать отчет</button>
-        <button type="button" class="btn btn-secondary" style="margin-top: 10px;" onclick="closeModal()">Закрыть</button>
-
-        <div id="clientMsgSection" style="display:none; margin-top: 20px;">
-            <label>Сгенерированное сообщение для отправки клиенту:</label>
-            <div class="msg-output" id="generatedClientMsg"></div>
-            <button type="button" class="btn" style="margin-top: 10px; background-color: var(--success);" onclick="copyMessage()">Скопировать сообщение</button>
-        </div>
-    </div>
-</div>
-
-<script>
-    // Хранилище заказов в localStorage
-    let ordersList = JSON.parse(localStorage.getItem('sc_orders_db')) || [];
-
-    const receptionForm = document.getElementById('receptionForm');
-    const ordersContainer = document.getElementById('ordersContainer');
-    const diagnosticModal = document.getElementById('diagnosticModal');
-
-    receptionForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        const newOrder = {
-            id: Date.now(),
-            date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-            clientName: document.getElementById('clientName').value,
-            clientPhone: document.getElementById('clientPhone').value,
-            deviceModel: document.getElementById('deviceModel').value,
-            clientProblem: document.getElementById('clientProblem').value,
-            diagRefusalPrice: document.getElementById('diagRefusalPrice').value,
-            status: 'На диагностике',
-            diagResult: '',
-            repairType: '',
-            totalPrice: ''
-        };
-
-        ordersList.push(newOrder);
-        syncStorage();
-        receptionForm.reset();
-        document.getElementById('diagRefusalPrice').value = '500 руб.'; // сброс к дефолту
-        alert('Устройство успешно принято! Квитанция создана (условия: хранение 30 дней, гарантия 14 дней).');
-    });
-
-    function renderOrders() {
-        if (ordersList.length === 0) {
-            ordersContainer.innerHTML = '<p style="text-align: center; color: #64748b;">Активных заказов нет</p>';
-            return;
-        }
-
-        ordersContainer.innerHTML = '';
-        // Выводим с новых к старым
-        ordersList.slice().reverse().forEach(order => {
-            let badgeClass = 'st-new';
-            if (order.status === 'Диагностика проведена') badgeClass = 'st-diag';
-            if (order.status === 'Готов / Выдан') badgeClass = 'st-ready';
-
-            let html = `
-                <div class="order-card">
-                    <div class="order-top">
-                        <span class="order-title">Заказ #${order.id.toString().slice(-5)} — ${order.deviceModel}</span>
-                        <span class="status-badge ${badgeClass}">${order.status}</span>
+        <!-- ВКЛАДКА 2: БАЗА ЗАКАЗОВ -->
+        <div id="tab-list" class="tab-content">
+            
+            <div class="report-section">
+                <div class="report-header-row">
+                    <span>📊 Отчет и Финансы</span>
+                    <select id="reportPeriod" onchange="updateStats()">
+                        <option value="today">За сегодня</option>
+                        <option value="week">За неделю</option>
+                        <option value="month">За месяц</option>
+                        <option value="all">За всё время</option>
+                    </select>
+                </div>
+                <div class="stats-grid-4">
+                    <div class="stat-card phones">
+                        <div class="num" id="repPhones">0</div>
+                        <div class="lbl">📱 Аппаратов</div>
                     </div>
-                    <div class="order-details">
-                        <p><b>Клиент:</b> ${order.clientName} (${order.clientPhone})</p>
-                        <p><b>Проблема:</b> ${order.clientProblem}</p>
-                        <p><b>Диагностика (при отказе):</b> ${order.diagRefusalPrice}</p>
-            `;
-
-            if (order.diagResult) {
-                html += `
-                    <hr style="border:0; border-top:1px solid #e2e8f0; margin: 8px 0;">
-                    <p><b>Диагноз:</b> ${order.diagResult}</p>
-                    <p><b>Ремонт/Замена:</b> ${order.repairType}</p>
-                    <p><b>Сумма ремонта:</b> ${order.totalPrice}</p>
-                `;
-            }
-
-            html += `
+                    <div class="stat-card revenue">
+                        <div class="num" id="repRevenue">0</div>
+                        <div class="lbl">💵 Выручка</div>
                     </div>
-                    <div class="order-actions">
-                        <button class="btn" style="padding: 8px 12px; font-size: 13px;" onclick="openEditModal(${order.id})">
-                            ${order.diagResult ? 'Изменить данные / Сумму' : 'Внести результат диагностики'}
-                        </button>
+                    <div class="stat-card expenses">
+                        <div class="num" id="repExpenses">0</div>
+                        <div class="lbl">🛒 Закупка/Расход</div>
+                    </div>
+                    <div class="stat-card profit">
+                        <div class="num" id="repProfit">0</div>
+                        <div class="lbl">💎 Прибыль</div>
                     </div>
                 </div>
+            </div>
+
+            <div class="search-box">
+                <input type="text" id="searchInput" oninput="renderOrders()" placeholder="🔍 Поиск по имени, телефону или треку...">
+            </div>
+
+            <div id="ordersContainer"></div>
+        </div>
+
+        <div class="developer-footer">
+            Разработчик: <a href="https://t.me/ko62er" target="_blank">@ko62er</a>
+        </div>
+    </div>
+
+    <!-- Модальное окно для печати квитанции -->
+    <div id="printModal">
+        <div class="receipt-content" id="receiptContentContainer">
+            <!-- Чековый контент -->
+        </div>
+        <div style="margin-top: 15px; display: flex; gap: 10px;" class="no-print">
+            <button class="btn" onclick="window.print()" style="background: var(--success);">🖨 Печать / PDF</button>
+            <button class="btn" onclick="closePrintModal()" style="background: #64748b;">❌ Закрыть</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно редактирования результатов диагностики -->
+    <div id="diagModal">
+        <div class="diag-content">
+            <h3 style="margin-top: 0; color: #60a5fa;">Результат диагностики и ремонта</h3>
+            <input type="hidden" id="modalOrderId">
+            
+            <div class="form-group">
+                <label>Что выявила диагностика:</label>
+                <textarea id="modalDiagResult" rows="2" placeholder="Например: Сгорел контроллер питания..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Что нужно заменить / Вид ремонта:</label>
+                <input type="text" id="modalRepairType" placeholder="Например: Замена контроллера питания">
+            </div>
+            <div class="form-group">
+                <label>Итоговая сумма ремонта:</label>
+                <input type="text" id="modalPrice" placeholder="Например: 3500">
+            </div>
+            <div class="form-group">
+                <label>Закупка запчасти (себестоимость для отчета):</label>
+                <input type="text" id="modalCost" placeholder="Например: 1200">
+            </div>
+
+            <div id="clientMsgPreviewContainer" style="display: none;">
+                <label>Готовое сообщение для клиента:</label>
+                <div class="msg-box" id="clientMsgPreviewText"></div>
+            </div>
+
+            <button class="btn" onclick="saveDiagnosisData()">Сохранить и сформировать сообщение</button>
+            <button class="btn" onclick="closeDiagModal()" style="background: #64748b; margin-top: 8px;">Закрыть</button>
+        </div>
+    </div>
+
+    <script>
+        let orders = JSON.parse(localStorage.getItem('more_case_orders')) || [];
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            if(tab === 'new') {
+                document.getElementById('tab-new').classList.add('active');
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+            } else {
+                document.getElementById('tab-list').classList.add('active');
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                renderOrders();
+            }
+        }
+
+        function parseDate(dateStr) {
+            if (!dateStr) return new Date(0);
+            const parts = dateStr.split('.');
+            if (parts.length !== 3) return new Date(0);
+            return new Date(parts[2], parts[1] - 1, parts[0]);
+        }
+
+        document.getElementById('orderForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const trackCode = 'MC-' + Math.floor(1000 + Math.random() * 9000);
+            const now = new Date();
+            const formattedDate = String(now.getDate()).padStart(2, '0') + '.' + 
+                                  String(now.getMonth() + 1).padStart(2, '0') + '.' + 
+                                  now.getFullYear();
+            
+            const newOrder = {
+                id: Date.now(),
+                track: trackCode,
+                model: document.getElementById('model').value,
+                issue: document.getElementById('issue').value,
+                diagRefusalPrice: document.getElementById('diag_refusal_price').value,
+                price: 'По результатам',
+                cost: '',
+                repairType: '',
+                diagResult: '',
+                name: document.getElementById('client_name').value,
+                phone: document.getElementById('client_phone').value.trim(),
+                deadline: document.getElementById('deadline').value,
+                status: 'На диагностике',
+                date: formattedDate
+            };
+
+            orders.unshift(newOrder);
+            saveAndRender();
+            
+            let tgMessage = `📦 *Новый заказ на диагностику: ${newOrder.track}*%0A📱 Устройство: ${newOrder.model}%0A🛠 Проблема: ${newOrder.issue}%0A👤 Клиент: ${newOrder.name} (${newOrder.phone})%0A⚠️ Цена за сборку/разборку (отказ): ${newOrder.diagRefusalPrice}%0A⏳ Срок: ${newOrder.deadline}`;
+            
+            window.open(`https://t.me/jvmpos?text=${tgMessage}`, '_blank');
+
+            document.getElementById('orderForm').reset();
+            switchTab('list');
+        });
+
+        function saveAndRender() {
+            localStorage.setItem('more_case_orders', JSON.stringify(orders));
+            document.getElementById('orderCount').textContent = orders.filter(o => o.status !== 'Выдан').length;
+            updateStats();
+        }
+
+        function updateStats() {
+            const period = document.getElementById('reportPeriod').value;
+            const now = new Date();
+            
+            let countPhones = 0;
+            let totalRevenue = 0;
+            let totalExpenses = 0;
+            let totalProfit = 0;
+
+            orders.forEach(ord => {
+                let orderDate = parseDate(ord.date);
+                let matchPeriod = false;
+
+                if (period === 'today') {
+                    const todayStr = String(now.getDate()).padStart(2, '0') + '.' + 
+                                     String(now.getMonth() + 1).padStart(2, '0') + '.' + 
+                                     now.getFullYear();
+                    if (ord.date === todayStr) matchPeriod = true;
+                } else if (period === 'week') {
+                    const diffDays = (now - orderDate) / (1000 * 60 * 60 * 24);
+                    if (diffDays >= 0 && diffDays <= 7) matchPeriod = true;
+                } else if (period === 'month') {
+                    if (orderDate.getMonth() === now.getMonth() && orderDate.getFullYear() === now.getFullYear()) matchPeriod = true;
+                } else if (period === 'all') {
+                    matchPeriod = true;
+                }
+
+                if (matchPeriod) {
+                    countPhones++;
+                    let numericPrice = parseInt(ord.price.replace(/[^0-9]/g, '')) || 0;
+                    let numericCost = parseInt((ord.cost || '').replace(/[^0-9]/g, '')) || 0;
+                    let profit = numericPrice - numericCost;
+
+                    totalRevenue += numericPrice;
+                    totalExpenses += numericCost;
+                    totalProfit += profit;
+                }
+            });
+
+            document.getElementById('repPhones').textContent = countPhones;
+            document.getElementById('repRevenue').textContent = totalRevenue.toLocaleString();
+            document.getElementById('repExpenses').textContent = totalExpenses.toLocaleString();
+            document.getElementById('repProfit').textContent = totalProfit.toLocaleString();
+        }
+
+        function openDiagModal(id) {
+            const ord = orders.find(o => o.id === id);
+            if (!ord) return;
+
+            document.getElementById('modalOrderId').value = ord.id;
+            document.getElementById('modalDiagResult').value = ord.diagResult || '';
+            document.getElementById('modalRepairType').value = ord.repairType || '';
+            document.getElementById('modalPrice').value = ord.price === 'По результатам' ? '' : ord.price;
+            document.getElementById('modalCost').value = ord.cost || '';
+            document.getElementById('clientMsgPreviewContainer').style.display = 'none';
+
+            document.getElementById('diagModal').style.display = 'flex';
+        }
+
+        function closeDiagModal() {
+            document.getElementById('diagModal').style.display = 'none';
+            renderOrders();
+        }
+
+        function saveDiagnosisData() {
+            const id = parseInt(document.getElementById('modalOrderId').value);
+            const diagResult = document.getElementById('modalDiagResult').value;
+            const repairType = document.getElementById('modalRepairType').value;
+            const price = document.getElementById('modalPrice').value;
+            const cost = document.getElementById('modalCost').value;
+
+            orders = orders.map(ord => {
+                if (ord.id === id) {
+                    ord.diagResult = diagResult;
+                    ord.repairType = repairType;
+                    ord.price = price;
+                    ord.cost = cost;
+                    ord.status = 'Готов к согласованию';
+                }
+                return ord;
+            });
+
+            const ord = orders.find(o => o.id === id);
+            
+            // Формируем текст сообщения для клиента
+            const messageText = `Здравствуйте, ${ord.name}! По вашему устройству (${ord.model}) проведена диагностика.\n` +
+                                `Диагноз: ${diagResult}.\n` +
+                                `Требуемая замена / ремонт: ${repairType}.\n` +
+                                `Сумма ремонта составит: ${price}.\n` +
+                                `В случае отказа от ремонта стоимость сборки/разборки (диагностики): ${ord.diagRefusalPrice}.\n` +
+                                `Ждем вашего ответа!`;
+
+            document.getElementById('clientMsgPreviewText').textContent = messageText;
+            document.getElementById('clientMsgPreviewContainer').style.display = 'block';
+            saveAndRender();
+        }
+
+        function sendMsg(id, channel) {
+            const ord = orders.find(o => o.id === id);
+            if (!ord) return;
+            
+            const text = `Здравствуйте, ${ord.name}! По устройству ${ord.model} (трек: ${ord.track}). ` + 
+                         (ord.diagResult ? `Диагностика: ${ord.diagResult}. Замена: ${ord.repairType}. Сумма ремонта: ${ord.price}.` : `Заказ принят в работу.`) +
+                         ` В случае отказа за сборку/разборку: ${ord.diagRefusalPrice}.`;
+
+            const encodedText = encodeURIComponent(text);
+            const cleanPhone = ord.phone.replace(/[^0-9+]/g, '');
+
+            if (channel === 'wa') {
+                window.open(`https://wa.me/${cleanPhone}?text=${encodedText}`, '_blank');
+            } else if (channel === 'tg') {
+                window.open(`https://t.me/+${cleanPhone}?text=${encodedText}`, '_blank');
+            } else if (channel === 'sms') {
+                window.location.href = `sms:${cleanPhone}?body=${encodedText}`;
+            }
+        }
+
+        function renderOrders() {
+            const container = document.getElementById('ordersContainer');
+            const searchQuery = document.getElementById('searchInput').value.toLowerCase().trim();
+            saveAndRender();
+
+            let filteredOrders = orders.filter(ord => {
+                const matchText = (ord.track + ' ' + ord.name + ' ' + ord.phone + ' ' + ord.model + ' ' + ord.issue + ' ' + (ord.note || '')).toLowerCase();
+                return matchText.includes(searchQuery);
+            });
+
+            if (filteredOrders.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: var(--text-muted); padding: 20px;">Заказы не найдены</p>';
+                return;
+            }
+
+            let activeHtml = '';
+            let archiveHtml = '';
+            let hasArchived = false;
+
+            filteredOrders.forEach(ord => {
+                const isReady = ord.status === 'Готов' || ord.status === 'Готов к согласованию';
+                const isDone = ord.status === 'Выдан';
+                
+                let statusClass = 'status-work';
+                if (isReady) statusClass = 'status-ready';
+                if (isDone) statusClass = 'status-done';
+
+                const cardHtml = `
+                    <div class="order-card ${isDone ? 'archived' : ''}">
+                        <div class="order-header">
+                            <span class="track-badge">📌 ${ord.track}</span>
+                            <span class="status-badge ${statusClass}">${ord.status}</span>
+                        </div>
+                        <div class="order-info">
+                            📱 Устройство: <span>${ord.model}</span><br>
+                            🛠 Проблема: <span>${ord.issue}</span><br>
+                            ${ord.diagResult ? `🔍 Диагностика: <span>${ord.diagResult}</span><br>` : ''}
+                            ${ord.repairType ? `🛠 Замена: <span>${ord.repairType}</span><br>` : ''}
+                            💰 Сумма: <span>${ord.price}</span> ${ord.cost ? `(Закупка: ${ord.cost})` : ''}<br>
+                            ⚠️ Диагностика при отказе: <span>${ord.diagRefusalPrice}</span><br>
+                            👤 Клиент: <span>${ord.name} (${ord.phone})</span><br>
+                            ⏳ Срок: <span>${ord.deadline}</span> | 📅 ${ord.date}
+                        </div>
+
+                        <div class="actions-grid">
+                            ${!isDone ? `
+                                <button class="btn-mini btn-wa" onclick="sendMsg(${ord.id}, 'wa')">💬 WA</button>
+                                <button class="btn-mini btn-tg" onclick="sendMsg(${ord.id}, 'tg')">✈️ TG</button>
+                                <button class="btn-mini btn-sms" onclick="sendMsg(${ord.id}, 'sms')">✉️ SMS</button>
+                                <button class="btn-mini btn-print" style="background: var(--primary);" onclick="openDiagModal(${ord.id})">⚙️ Заполнить результаты диагностики</button>
+                                <button class="btn-mini btn-print" onclick="openPrintModal(${ord.id})">🖨 Печать квитанции</button>
+                                <div class="btn-status-group">
+                                    <button class="btn-mini btn-status" onclick="changeStatus(${ord.id}, '${ord.status === 'Готов' ? 'В работе' : 'Готов'}')">
+                                        ${ord.status === 'Готов' ? '🔄 В работу' : '✅ Готов'}
+                                    </button>
+                                    <button class="btn-mini btn-done" onclick="changeStatus(${ord.id}, 'Выдан')">
+                                        📦 Выдан
+                                    </button>
+                                </div>
+                            ` : `
+                                <button class="btn-mini btn-status" style="grid-column: span 3;" onclick="changeStatus(${ord.id}, 'Готов')">
+                                    🔄 Вернуть из архива
+                                </button>
+                            `}
+                            <button class="btn-mini btn-del" onclick="deleteOrder(${ord.id})">🗑 Удалить заказ</button>
+                        </div>
+                    </div>
+                `;
+
+                if (isDone) {
+                    hasArchived = true;
+                    archiveHtml += cardHtml;
+                } else {
+                    activeHtml += cardHtml;
+                }
+            });
+
+            let finalHtml = activeHtml;
+            if (hasArchived) {
+                finalHtml += `<div class="archive-title">📁 Архив выданных заказов</div>` + archiveHtml;
+            }
+
+            container.innerHTML = finalHtml;
+        }
+
+        function openPrintModal(id) {
+            const ord = orders.find(o => o.id === id);
+            if (!ord) return;
+
+            const modalContainer = document.getElementById('receiptContentContainer');
+            modalContainer.innerHTML = `
+                <div class="receipt-header">
+                    <h2>MORE CASE</h2>
+                    <p>Квитанция приема в ремонт</p>
+                </div>
+                <div class="receipt-body">
+                    <div><span>Трек-код:</span> <b>${ord.track}</b></div>
+                    <div><span>Дата приема:</span> <b>${ord.date}</b></div>
+                    <div><span>Клиент:</span> <b>${ord.name}</b></div>
+                    <div><span>Телефон:</span> <b>${ord.phone}</b></div>
+                    <div><span>Устройство:</span> <b>${ord.model}</b></div>
+                    <div><span>Неисправность:</span> <b>${ord.issue}</b></div>
+                    <div><span>Диаг. при отказе:</span> <b>${ord.diagRefusalPrice}</b></div>
+                    <div><span>Срок выдачи:</span> <b>${ord.deadline}</b></div>
+                    <div><span>Сумма к оплате:</span> <b>${ord.price}</b></div>
+                </div>
+                <div class="receipt-rules">
+                    <b>Условия и гарантия:</b> Срок хранения аппарата после готовности — <b>30 дней</b>. По истечении срока мастерская ответственности не несет, невостребованная техника может быть реализована. Гарантия на выполненный ремонт и запчасть составляет <b>14 дней</b>.
+                </div>
+                <div class="receipt-signatures">
+                    <div class="sig-row">
+                        <span>Мастер: Жахонгир</span>
+                        <span>Подпись: <span class="sig-line"></span></span>
+                    </div>
+                    <div class="sig-row">
+                        <span>Клиент:</span>
+                        <span>Подпись: <span class="sig-line"></span></span>
+                    </div>
+                </div>
+                <div class="receipt-footer">
+                    Спасибо, что выбрали More Case!<br>
+                    Сохраняйте квитанцию до выдачи аппарата.
+                </div>
             `;
-            ordersContainer.innerHTML += html;
-        });
-    }
+            document.getElementById('printModal').style.display = 'flex';
+        }
 
-    function openEditModal(id) {
-        const order = ordersList.find(o => o.id === id);
-        if (!order) return;
+        function closePrintModal() {
+            document.getElementById('printModal').style.display = 'none';
+        }
 
-        document.getElementById('editOrderId').value = order.id;
-        document.getElementById('editDiagResult').value = order.diagResult || '';
-        document.getElementById('editRepairType').value = order.repairType || '';
-        document.getElementById('editTotalPrice').value = order.totalPrice || '';
-        document.getElementById('clientMsgSection').style.display = 'none';
+        function changeStatus(id, newStatus) {
+            orders = orders.map(ord => {
+                if (ord.id === id) {
+                    ord.status = newStatus;
+                }
+                return ord;
+            });
+            renderOrders();
+        }
 
-        diagnosticModal.style.display = 'flex';
-    }
+        function deleteOrder(id) {
+            if(confirm('Удалить этот заказ из базы?')) {
+                orders = orders.filter(ord => ord.id !== id);
+                renderOrders();
+            }
+        }
 
-    function closeModal() {
-        diagnosticModal.style.display = 'none';
-        renderOrders();
-    }
-
-    function saveDiagnosisData() {
-        const id = Number(document.getElementById('editOrderId').value);
-        const order = ordersList.find(o => o.id === id);
-        if (!order) return;
-
-        order.diagResult = document.getElementById('editDiagResult').value;
-        order.repairType = document.getElementById('editRepairType').value;
-        order.totalPrice = document.getElementById('editTotalPrice').value;
-        order.status = 'Диагностика проведена';
-
-        syncStorage();
-
-        // Формирование сообщения строго по шаблону
-        const messageText = `Здравствуйте, ${order.clientName}!\n` +
-            `По вашему устройству (${order.deviceModel}) проведена диагностика.\n` +
-            `Результат: ${order.diagResult}\n` +
-            `Требуется замена/ремонт: ${order.repairType}\n` +
-            `Сумма ремонта составит: ${order.totalPrice}\n` +
-            `В случае отказа от ремонта стоимость сборки/разборки (диагностики) составит: ${order.diagRefusalPrice}\n` +
-            `Ждем вашего решения!`;
-
-        document.getElementById('generatedClientMsg').innerText = messageText;
-        document.getElementById('clientMsgSection').style.display = 'block';
-    }
-
-    function copyMessage() {
-        const text = document.getElementById('generatedClientMsg').innerText;
-        navigator.clipboard.writeText(text).then(() => {
-            alert('Сообщение скопировано в буфер обмена!');
-        });
-    }
-
-    function syncStorage() {
-        localStorage.setItem('sc_orders_db', JSON.stringify(ordersList));
-        renderOrders();
-    }
-
-    // Первичная инициализация при открытии страницы
-    renderOrders();
-</script>
-
+        saveAndRender();
+    </script>
 </body>
 </html>
+
